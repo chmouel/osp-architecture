@@ -5,7 +5,9 @@ date: 2026-10-13
 status: proposed
 authors:
   - "@chmouel"
-reviewers: []
+reviewers:
+  - "@theakshaypant"
+  - "@zakisk"
 tags:
   - pipelines-as-code
   - ai
@@ -208,12 +210,12 @@ PAC documentation.
 
 `Required`
 
-- In scope:
+- **In-Scope:**
   - Explaining failed PipelineRuns on pull requests and pushes.
   - The PAC follow-up trigger, failure summary and publishing.
   - paco `investigate`.
   - Deprecating `spec.settings.ai`.
-- Out of scope:
+- **Out-of-Scope:**
   - PR code review, which paco already covers.
   - Pushing fixes to pull request branches.
   - Model providers beyond what paco supports in its first release.
@@ -298,7 +300,6 @@ The decision is considered accepted when:
 - [tektoncd/pipelines-as-code#2303: PR description in LLM context](https://github.com/tektoncd/pipelines-as-code/issues/2303)
 - [tektoncd/pipelines-as-code#2304: Kubernetes events in LLM context](https://github.com/tektoncd/pipelines-as-code/issues/2304)
 - [JIRA: SRVKP-14253](https://redhat.atlassian.net/browse/SRVKP-14253)
-- [JIRA: SRVKP-11545](https://redhat.atlassian.net/browse/SRVKP-11545)
 - [JIRA: SRVKP-11549, duplicate comments](https://redhat.atlassian.net/browse/SRVKP-11549)
 - [JIRA: SRVKP-9107, redaction](https://redhat.atlassian.net/browse/SRVKP-9107)
 
