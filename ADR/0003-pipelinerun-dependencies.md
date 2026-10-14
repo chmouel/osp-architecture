@@ -249,7 +249,7 @@ PipelineRun from being pruned until its follow-ups have started.
 
 The decision is considered accepted when:
 
-- [ ] Tekton Pipelines maintainers have said whether they want a native feature PAC can build on
+- [ ] Tekton Pipelines maintainers have said whether they want a native feature PAC can build on, including whether Pipelines in Pipelines will pass child results and status to the parent
 - [ ] Upstream PAC agrees on the annotation, CEL and template contract
 - [ ] The open questions above are answered in the upstream design
 - [ ] Trust, authorization and RBAC are reviewed
@@ -264,6 +264,7 @@ The decision is considered accepted when:
 | ------ | ---- | ---- |
 | Dependencies and CEL in PAC (chosen) | Uses `.tekton/` definitions; one expression covers results, event and branch; checks and comment commands work | PAC has to store group state and define rerun rules |
 | Build it into Tekton Pipelines | One implementation for every Tekton user | Needs a TEP and takes longer; PAC still owns everything tied to Git |
+| Tekton Pipelines in Pipelines (TEP-0056) | Each stage runs as a child PipelineRun; Tekton handles ordering and controller restarts | Alpha; child results and status do not reach the parent yet, so no digest passing and no reaction to a failed child; one parent run, so a single stage cannot be rerun and PAC sees only the parent |
 | A watcher outside PAC (Tekton CloudEvents and Triggers) | Exists today | Cannot wait for two runs or avoid duplicates; no checks or `/retest`; needs its own Git token |
 | One combined Tekton Pipeline | Tekton already orders tasks | Ties together work teams manage separately |
 | Do nothing | No new code | Teams keep building the ordering themselves |
@@ -272,6 +273,13 @@ Tekton does not know which runs came from the same push, whether the
 author is trusted, or what `/retest` means, so PAC keeps that part
 whatever starts the PipelineRun. If Tekton maintainers want a native
 feature for waiting and starting, PAC should build on it.
+
+Pipelines in Pipelines is the closest Tekton feature today. Once it
+passes child results and status to the parent, PAC could turn the
+annotations into one generated parent PipelineRun. Each definition
+would become a child, `on-pipelinerun` would become `runAfter`, the CEL
+condition would become `when`, and failure follow-ups would move to
+`finally`. The annotations users write would stay the same.
 
 A watcher would be enough for AI failure investigation alone. Delivery
 chains need PAC: waiting for both build and tests on `main`, passing
@@ -321,6 +329,8 @@ investigation then reuses the same mechanism.
 - [Pipelines-as-Code](https://github.com/tektoncd/pipelines-as-code)
 - [Tekton PipelineRun reasons](https://github.com/tektoncd/pipeline/blob/main/pkg/apis/pipeline/v1/pipelinerun_types.go)
 - [Tekton Pipelines events](https://tekton.dev/docs/pipelines/events/)
+- [TEP-0056: Pipelines in Pipelines](https://github.com/tektoncd/community/blob/main/teps/0056-pipelines-in-pipelines.md)
+- [Tekton Pipelines in Pipelines documentation](https://github.com/tektoncd/pipeline/blob/main/docs/pipelines-in-pipelines.md)
 - [Tekton Results watcher](https://github.com/tektoncd/results/blob/main/docs/watcher/README.md)
 - [Common Expression Language](https://cel.dev/)
 - [paco-cli](https://github.com/pipelines-as-code/paco-cli)
