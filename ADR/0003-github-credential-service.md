@@ -36,7 +36,7 @@ The Secret keeps the same name and fields, so clone tasks do not change. Pipelin
 
 PaC needs a small, opt-in hook to hand the Secret over to the service. That hook belongs upstream in tektoncd/pipelines-as-code; the service itself is the downstream part this ADR covers.
 
-The service does two separate jobs: it gets a token from somewhere, and it keeps the Secret in each namespace fresh. We want the second job to be the core of the service and the first to be pluggable, so that an installation that already has a way to mint GitHub tokens can plug it in and let the service only push renewals. The [token sources](#token-sources) section lists the integrations we have in mind.
+The service obtains tokens through a token-source adapter and keeps the Secret in each namespace fresh. PaC submits the same ConfigMap request regardless of the token source. Only token acquisition changes between adapters; the service still handles Secret creation, renewal scheduling and cleanup. An installation with an existing token-minting service could use an adapter for it. The [token sources](#token-sources) section lists the integrations we have in mind.
 
 ### How it works
 
@@ -60,6 +60,7 @@ sequenceDiagram
     participant GH as GitHub
     participant Sec as git-auth Secret
     participant PR as PipelineRun
+    Note over Svc,GH: First phase: direct GitHub adapter
     PaC->>Req: create request
     Svc->>GH: mint token for one repository with approved permissions
     Svc->>Sec: write credentials and expiry
