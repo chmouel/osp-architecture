@@ -28,7 +28,7 @@ Affected: PipelineRuns on private GitHub repositories that use PaC's GitHub App 
 
 We will ship a separate credential service next to PaC in OpenShift Pipelines. It owns the PipelineRun's git-auth Secret: it creates it, renews the token in it while the run is unfinished, and lets it be deleted with the run. PaC keeps everything else, including events, repository authorization, creating and queuing PipelineRuns, reporting status to GitHub, and its own GitHub API authentication. The service never creates or schedules a PipelineRun.
 
-We prefer a new service over adding renewal to PaC because it keeps security concerns apart. The code that mints tokens and writes them into tenant namespaces runs under its own service account with its own narrow permissions, away from PaC's internet-facing webhook handling, and it can be reviewed, audited and restricted on its own.
+We prefer a new service over adding renewal to PaC because it keeps security concerns apart. The code that mints tokens and writes them into Kubernetes Secrets in tenant namespaces runs under its own service account with its own narrow permissions, away from PaC's internet-facing webhook handling, and it can be reviewed, audited and restricted on its own.
 
 The service is easy to turn off. The OpenShift Pipelines operator will most likely ship it disabled by default, because only large installations, where PipelineRuns routinely queue for more than an hour, need it. Disabling it brings back today's behavior: PaC writes the token into the Secret itself.
 
